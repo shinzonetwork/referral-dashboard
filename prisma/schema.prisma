@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ReferrerType {
+  GENERATOR
+  HOST
+  BUILDER
+  FOUNDATION_PARTNER
+}
+
+enum ReferredType {
+  GENERATOR
+  HOST
+  BUILDER
+}
+
+enum ReferralStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ReferralSource {
+  API_INGEST
+  ADMIN_MANUAL
+}
+
+enum ActorType {
+  ADMIN
+  SYSTEM
+  SELF_SERVICE
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  createdReferrers  Referrer[]            @relation("ReferrerCreatedBy")
+  createdLinks      ReferralLink[]        @relation("LinkCreatedBy")
+  verifiedReferrals Referral[]            @relation("ReferralVerifiedBy")
+  generatedBatches  PayoutBatchSnapshot[]
+  auditLogs         AuditLog[]
+}
+
+// createdByAdminId is nullable: individual referrers (Validator/Host/Builder)
+// can self-register via the public /refer page with no admin involved.
+// Foundation/Partner referrers remain admin-created only.
+model Referrer {
+  id               String       @id @default(cuid())
+  walletAddress    String       @unique
+  type             ReferrerType
+  label            String
+  notes            String?
+  createdByAdminId String?
+  createdByAdmin   Admin?       @relation("ReferrerCreatedBy", fields: [createdByAdminId], references: [id])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  links ReferralLink[]
+
+  @@index([type])
+}
+
+model ReferralLink {
+  id               String    @id @default(cuid())
+  code             String    @unique
+  referrerId       String
+  referrer         Referrer  @relation(fields: [referrerId], references: [id])
+  active           Boolean   @default(true)
+  createdByAdminId String?
+  createdByAdmin   Admin?    @relation("LinkCreatedBy", fields: [createdByAdminId], references: [id])
+  createdAt        DateTime  @default(now())
+  revokedAt        DateTime?
+
+  referrals Referral[]
+}
+
+// No unique constraint on (referralLinkId, referredWalletAddress): confirmed
+// that a referred party qualifying under multiple types (e.g. host and
+// builder) pays the referrer under both tiers, so each qualifying type gets
+// its own row here, verified and batched independently.
+model Referral {
+  id                    String         @id @default(cuid())
+  referralLinkId        String
+  referralLink          ReferralLink   @relation(fields: [referralLinkId], references: [id])
+  referredWalletAddress String
+  referredType          ReferredType?
+  status                ReferralStatus @default(PENDING)
+  tierPercentSnapshot   Decimal?       @db.Decimal(5, 2)
+  source                ReferralSource
+  notes                 String?
+  verifiedByAdminId     String?
+  verifiedByAdmin       Admin?         @relation("ReferralVerifiedBy", fields: [verifiedByAdminId], references: [id])
+  verifiedAt            DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  payoutBatchItem PayoutBatchItem?
+
+  @@index([status])
+  @@index([referralLinkId])
+}
+
+model AuditLog {
+  id           String    @id @default(cuid())
+  entityType   String
+  entityId     String
+  action       String
+  actorType    ActorType
+  actorAdminId String?
+  actorAdmin   Admin?    @relation(fields: [actorAdminId], references: [id])
+  beforeValue  Json?
+  afterValue   Json?
+  createdAt    DateTime  @default(now())
+
+  @@index([entityType, entityId])
+}
+
+model PayoutBatchSnapshot {
+  id                 String   @id @default(cuid())
+  periodLabel        String
+  generatedAt        DateTime @default(now())
+  generatedByAdminId String
+  generatedByAdmin   Admin    @relation(fields: [generatedByAdminId], references: [id])
+
+  items PayoutBatchItem[]
+}
+
+model PayoutBatchItem {
+  id                    String              @id @default(cuid())
+  batchId               String
+  batch                 PayoutBatchSnapshot @relation(fields: [batchId], references: [id])
+  referralId            String              @unique
+  referral              Referral            @relation(fields: [referralId], references: [id])
+  referrerWalletAddress String
+  referredWalletAddress String
+  referredType          ReferredType?
+  tierPercentSnapshot   Decimal             @db.Decimal(5, 2)
+  verifiedAt            DateTime
+  createdAt             DateTime            @default(now())
+}

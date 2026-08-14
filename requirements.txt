@@ -1,0 +1,56 @@
+### Purpose
+
+Shinzo is introducing a referral program to accelerate generator, host and builder growth by rewarding existing participants for bringing in new, verified ones. This document proposes the design and build plan for the Referral Analytics Dashboard, the system that will track referral activity, verify eligibility and support the payout process.
+
+first we need the referral link. My goal is to get this to be automated through a ref link that we can hand to people that become Validators, Hosts or we have an admin where we can generate a unique one for foundations etc... and that way we know everyone that has signed up through the ref link and what to attribute
+
+The dashboard has only one face on one data model
+
+- an **internal admin view** where the team monitors the whole program, overrides verification, and exports payout batches. (It does **not** execute payouts)
+
+## Background
+
+| Decision | Detail |
+| --- | --- |
+| **Payout split** | 5% validators, 7% hosts, 10% builders of what Shinzo earns from that referred party in year one |
+| **Payout cadence** | Periodic batch (monthly), not per-transaction |
+| **Attribution** | Off-chain, via unique referral links, no on-chain compute overhead |
+| **Invite limits** | None. |
+| **Payout currency** | Stablecoin (USDC), not SHNZ as the token won't be live/liquid at mainnet launch |
+| **Registration model** | Individual only. No bulk/batch registration for validator groups |
+| **Reward trigger** | Only on **verified status,** the referred party must actually become a generator, host, or builder and generate revenue. No payment for mere signups |
+
+### **Reward Structure & Payment Logic**
+
+| **Referred party type** | **Revenue share** | **Trigger** |
+| --- | --- | --- |
+| Validator | 5% | Verified validator status |
+| Host | 7% | Verified host status |
+| Builder | 10% | Verified builder status |
+- Payouts are batched (monthly), not per-transaction, to reduce operational overhead and gas/processing costs.
+- Payment currency is USDC (or another stablecoin), not the Shinzo token.
+- Each payout batch produces verifiable cryptographic proof and a receipt per recipient.
+
+### Scope
+
+- Unique referral link generation per validator, host, and builder.
+- Off-chain attribution: capturing signups via referral link and cross-referencing with the accounting system.
+- Verification gating: rewards only trigger once the referred party proves validator/host/builder status.
+- Tiered reward calculation: 5% (validators), 7% (hosts), 10% (builders).
+- Scheduled batch payouts (monthly, TBD) in USDC, with cryptographic proof/receipts.
+- Individual registration only: one referral link per participant, no bulk onboarding.
+- A dashboard view for tracking referral activity, verification status, and payout history.
+
+### Out of Scope
+
+- It does not calculate payouts that will be done separately
+- It does not execute payouts that will be done separately
+
+### Goals
+
+- Accurately attribute new validator, host, and builder signups to the referrer whose link they used.
+- Pay out only against **verified, revenue-generating** status — never against raw signups.
+- Serve both audiences from one data model: a public dashboard for referrers, an admin dashboard for the team.
+- Produce a clean, auditable payout report each cycle that ops can execute against.
+
+for building ui use this repo: https://github.com/shinzonetwork/web
