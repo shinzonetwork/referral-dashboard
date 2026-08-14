@@ -48,3 +48,6 @@ next-env.d.ts
 /.claude/
 /.windsurf/
 skills-lock.json
+
+# Internal working notes — kept locally, not pushed
+/DECISIONS_AND_OPEN_QUESTIONS.md
