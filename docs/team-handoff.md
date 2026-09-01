@@ -326,7 +326,7 @@ or a test network, example success/not-found/error responses, retry and timeout 
 and an end-to-end test that creates a Pending referral without exposing a secret in the
 browser.
 
-## Accounting/finance team: implementation requested
+## To brainstorm
 
 Please confirm:
 
@@ -389,13 +389,3 @@ Please provide:
 - Manual status changes are audited, but external registration and revenue truth are not
   integrated.
 - The application depends on Google Fonts during production builds.
-
-## Current verification status
-
-As reviewed on 2026-09-01:
-
-- 26 unit tests pass across six test files.
-- Prisma schema validation passes.
-- Prisma Client 7.9.1 generation passes.
-- ESLint has no errors and two warnings from the registry stub's unused parameters.
-- The Next.js production build passes when it can download Google Fonts.
