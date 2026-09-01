@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shinzo Referral Dashboard
 
-## Getting Started
+Internal referral operations dashboard for Shinzo. It creates and resolves referral
+links, records referred participants, supports manual verification, snapshots verified
+referrals into payout batches, and exports those batches for accounting. It does not
+calculate revenue or execute USDC payouts.
 
-First, run the development server:
+## Run locally
+
+Prerequisites:
+
+- Node.js 20.19 or newer
+- npm
+- A PostgreSQL database and connection string
+
+```bash
+npm ci
+cp .env.example .env
+```
+
+Edit `.env`, then initialize the database:
+
+```bash
+npx prisma migrate deploy
+npx prisma generate
+npx prisma db seed
+```
+
+Start the application:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The seed command creates the
+admin configured by `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, and
+`SEED_ADMIN_NAME`, plus a sample referral link with code `TESTCODE1`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For complete setup instructions, troubleshooting, and test commands, see
+[docs/local-development.md](docs/local-development.md).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Team handoff
 
-## Learn More
+The current architecture, database model, integration contracts, known gaps, and
+specific requests for the frontend, backend, infrastructure, and accounting teams—now
+mapped to the existing two-step Generator Assertion → Registration flow—are in
+[docs/team-handoff.md](docs/team-handoff.md).
 
-To learn more about Next.js, take a look at the following resources:
+Existing API contracts:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Referral identifier resolution](docs/resolve-contract.md)
+- [Referral ingestion](docs/ingest-contract.md)
+- [Accounting payout batches](docs/accounting-contract.md)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Useful commands
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev       # development server
+npm test          # unit tests
+npm run lint      # ESLint
+npm run build     # production build
+npm start         # run a completed production build
+npx prisma studio # inspect local database data
+```

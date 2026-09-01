@@ -8,7 +8,7 @@
 // (Duncan mentioned "wallets that are registered with Shinzohub can get
 // uuids," implying ShinzoHub maintains this registry — but we don't have
 // an endpoint, contract address, or ABI). Flagged in
-// DECISIONS_AND_OPEN_QUESTIONS.md as the concrete blocking question.
+// docs/team-handoff.md as the concrete blocking question.
 //
 // Deliberately fails closed (returns false) rather than failing open, per
 // the team's explicit "avoid random/shady wallets" stance — until this is

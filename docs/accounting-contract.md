@@ -4,7 +4,7 @@ The future accounting service **pulls** payout data from this dashboard via a
 read-only API — confirmed direction, but the fine details (polling cadence,
 pagination, whether it needs a "mark as consumed" step, preferred auth
 mechanism) are **not yet decided by the team**. See
-`DECISIONS_AND_OPEN_QUESTIONS.md`. This is today's version; revisit once
+`team-handoff.md`. This is today's version; revisit once
 those are confirmed.
 
 Deliberately **no dollar amounts appear anywhere in this API** — tier percent
@@ -40,7 +40,7 @@ X-Accounting-Token: <token>
 Full detail for one batch — one entry per verified referral in that batch.
 Note a referrer can appear more than once in a batch if the same referred
 wallet qualified under more than one type (e.g. host and builder) — each
-qualifying referral is paid independently (see `DECISIONS_AND_OPEN_QUESTIONS.md`,
+qualifying referral is paid independently (see `team-handoff.md`,
 "Multiple/duplicate tiers").
 
 ```

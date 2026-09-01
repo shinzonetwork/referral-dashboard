@@ -33,7 +33,7 @@ export type SelfServeState = { url?: string; error?: string };
 // docs.shinzo.network, Builder onboarding is a local CLI wallet with no
 // registration event), so there's nothing to verify against yet; Builder
 // self-serve is left trust-based until the team clarifies whether/how a
-// Builder should be verified. Flagged in DECISIONS_AND_OPEN_QUESTIONS.md.
+// Builder should be verified. Flagged in docs/team-handoff.md.
 export async function generateOwnReferralLink(
   _prevState: SelfServeState,
   formData: FormData,

@@ -4,7 +4,7 @@
 dashboard. The team has confirmed the identifier shape (see below) and the
 security approach (real auth, not CORS), but **exactly which system calls
 this, and at what point in the registration flow, is still open** — see
-`DECISIONS_AND_OPEN_QUESTIONS.md`. This is today's version of the contract;
+`team-handoff.md`. This is today's version of the contract;
 revisit the caller/timing details once those are confirmed.
 
 ## Auth
